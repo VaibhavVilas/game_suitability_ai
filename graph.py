@@ -1,34 +1,53 @@
+from typing import TypedDict
+
 from langgraph.graph import StateGraph
-from typing import TypedDict, List, Dict, Any
 
 from nodes import (
-    fetch_liked_games,
-    build_player_profile,
-    fetch_target_game,
-    llm_decision
+    fetch_games_data,
+    generate_response
 )
 
 
-class GameState(TypedDict):
-    liked_games: List[str]
-    game_to_check: str
-    liked_games_data: List[Dict[str, Any]]
-    player_profile: Dict[str, Any]
-    game_data: Dict[str, Any]
-    result: Dict[str, Any]
+# ====================================================
+# STATE
+# ====================================================
 
+class GameState(TypedDict):
+
+    user_message: str
+
+    games_data: list
+
+    final_response: str
+
+
+# ====================================================
+# GRAPH
+# ====================================================
 
 builder = StateGraph(GameState)
 
-builder.add_node("fetch_liked_games", fetch_liked_games)
-builder.add_node("build_profile", build_player_profile)
-builder.add_node("fetch_target", fetch_target_game)
-builder.add_node("decision", llm_decision)
+builder.add_node(
+    "fetch_games_data",
+    fetch_games_data
+)
 
-builder.set_entry_point("fetch_liked_games")
+builder.add_node(
+    "generate_response",
+    generate_response
+)
 
-builder.add_edge("fetch_liked_games", "build_profile")
-builder.add_edge("build_profile", "fetch_target")
-builder.add_edge("fetch_target", "decision")
+builder.set_entry_point(
+    "fetch_games_data"
+)
+
+builder.add_edge(
+    "fetch_games_data",
+    "generate_response"
+)
+
+builder.set_finish_point(
+    "generate_response"
+)
 
 graph = builder.compile()

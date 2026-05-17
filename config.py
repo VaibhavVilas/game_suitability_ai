@@ -8,9 +8,12 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 IGDB_CLIENT_ID = os.getenv("IGDB_CLIENT_ID")
 IGDB_CLIENT_SECRET  = os.getenv("IGDB_CLIENT_SECRET")
 
+_token_cache = {"token": None}
 
-# 🔑 Get IGDB access token dynamically
 def get_igdb_token():
+    if _token_cache["token"]:
+        return _token_cache["token"]
+
     url = "https://id.twitch.tv/oauth2/token"
 
     params = {
@@ -22,4 +25,9 @@ def get_igdb_token():
     response = requests.post(url, params=params)
     data = response.json()
 
-    return data["access_token"]
+    if "access_token" not in data:
+        raise Exception(f"IGDB TOKEN ERROR: {data}")
+
+    _token_cache["token"] = data["access_token"]
+
+    return _token_cache["token"]

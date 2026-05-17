@@ -1,35 +1,6 @@
-# from fastapi import FastAPI
-# from models import GameRequest
-# from graph import graph
-
-# app = FastAPI()
-
-
-# @app.get("/")
-# def home():
-#     return {"message": "Game Suitability AI with IGDB is running 🚀"}
-
-
-# @app.post("/check-game")
-# def check_game(request: GameRequest):
-
-#     state = {
-#         "liked_games": request.liked_games,
-#         "difficulty": request.difficulty,
-#         "story_focus": request.story_focus,
-#         "game_to_check": request.game_to_check
-#     }
-
-#     result = graph.invoke(state)
-
-#     return {
-#         "game": request.game_to_check,
-#         "analysis": result["result"]
-#     }
-
-
 from fastapi import FastAPI
-from models import GameRequest
+
+from models import ChatRequest
 from graph import graph
 
 app = FastAPI()
@@ -37,21 +8,20 @@ app = FastAPI()
 
 @app.get("/")
 def home():
-    return {"message": "Game Suitability AI (Smart Version) 🚀"}
+    return {
+        "message": "AI Gaming Advisor Running 🚀"
+    }
 
 
-@app.post("/check-game")
-def check_game(request: GameRequest):
+@app.post("/chat")
+def chat(request: ChatRequest):
 
     state = {
-        "liked_games": request.liked_games,
-        "game_to_check": request.game_to_check
+        "user_message": request.message
     }
 
     result = graph.invoke(state)
 
     return {
-        "game": request.game_to_check,
-        "player_profile": result["player_profile"],
-        "analysis": result["result"]
+        "response": result["final_response"]
     }
