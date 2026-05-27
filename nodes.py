@@ -4,13 +4,13 @@ import requests
 from langchain_openai import ChatOpenAI
 from langchain.messages import HumanMessage
 
-from config import get_igdb_token, IGDB_CLIENT_ID
+from config import get_igdb_token, IGDB_CLIENT_ID, MAX_TOKENS
 
 
 llm = ChatOpenAI(
     model="gpt-4.1",
     temperature=0.7,
-    max_tokens=100
+    max_tokens=MAX_TOKENS
 )
 
 

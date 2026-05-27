@@ -7,6 +7,7 @@ load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 IGDB_CLIENT_ID = os.getenv("IGDB_CLIENT_ID")
 IGDB_CLIENT_SECRET  = os.getenv("IGDB_CLIENT_SECRET")
+MAX_TOKENS = 200
 
 _token_cache = {"token": None}
 
