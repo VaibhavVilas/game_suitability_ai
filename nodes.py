@@ -127,6 +127,9 @@ def generate_response(state):
 
     user_message = state["user_message"]
 
+    print("\nCONVERSATION HISTORY:\n")
+    print(state["messages"])
+
     # No games found
 #     if len(games_data) == 0:
 
@@ -211,8 +214,8 @@ OUTPUT FORMAT:
 4. Biggest risks/frustrations
 5. Final recommendation
 
-User Message:
-{user_message}
+Conversation History:
+{state["messages"]}
 
 IGDB Data:
 {games_data}

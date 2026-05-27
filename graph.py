@@ -14,6 +14,8 @@ from nodes import (
 
 class GameState(TypedDict):
 
+    messages: list
+
     user_message: str
 
     games_data: list

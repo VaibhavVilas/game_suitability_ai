@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from httpcore import request
 from models import ChatRequest
 from graph import graph
 
@@ -24,8 +25,23 @@ def home():
 @app.post("/chat")
 def chat(request: ChatRequest):
 
+    # state = {
+    #     "user_message": request.message
+    # }
+
+    conversation = [
+        {
+            "role": m.role,
+            "content": m.content
+        }
+        for m in request.messages
+    ]
+
+    latest_user_message = request.messages[-1].content
+
     state = {
-        "user_message": request.message
+        "messages": conversation,
+        "user_message": latest_user_message
     }
 
     result = graph.invoke(state)
