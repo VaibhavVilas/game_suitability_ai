@@ -10,7 +10,7 @@ from config import get_igdb_token, IGDB_CLIENT_ID
 llm = ChatOpenAI(
     model="gpt-4.1",
     temperature=0.7,
-    max_tokens=500
+    max_tokens=100
 )
 
 
