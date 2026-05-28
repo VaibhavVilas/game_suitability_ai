@@ -130,20 +130,6 @@ def generate_response(state):
     print("\nCONVERSATION HISTORY:\n")
     print(state["messages"])
 
-    # No games found
-#     if len(games_data) == 0:
-
-#         prompt = f"""
-# You are a conversational gaming advisor.
-
-# User Message:
-# {user_message}
-
-# Respond naturally.
-# """
-
-#     else:
-
     prompt = f"""
 You are an expert gaming recommendation advisor.
 
