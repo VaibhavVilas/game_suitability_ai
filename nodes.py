@@ -237,13 +237,13 @@ from config import (
 mini_llm = ChatOpenAI(
     model="gpt-4.1-mini",
     temperature=0,
-    max_tokens=100
+    max_tokens=500
 )
 
 main_llm = ChatOpenAI(
     model="gpt-4.1",
     temperature=0.7,
-    max_tokens=250
+    max_tokens=500
 )
 
 
@@ -410,6 +410,26 @@ def fetch_games_data(state):
 
 def generate_response(state):
 
+    prompt = _build_response_prompt(state)
+
+    print("\nFINAL PROMPT:\n")
+    print(prompt)
+
+    response = main_llm.invoke([
+        HumanMessage(content=prompt)
+    ])
+
+    state["final_response"] = response.content
+
+    return state
+
+
+# ==========================================
+# HELPER → BUILD RESPONSE PROMPT
+# ==========================================
+
+def _build_response_prompt(state):
+
     messages = state["messages"]
 
     recent_messages = messages[-6:]
@@ -418,7 +438,7 @@ def generate_response(state):
 
     games_data = state["games_data"]
 
-    prompt = f"""
+    return f"""
 You are GameSense AI,
 an expert gaming recommendation assistant.
 
@@ -441,13 +461,16 @@ IGDB Data:
 Generate a helpful response.
 """
 
-    print("\nFINAL PROMPT:\n")
-    print(prompt)
 
-    response = main_llm.invoke([
+# ==========================================
+# STREAMING → GENERATE RESPONSE
+# ==========================================
+
+def stream_response(state):
+
+    prompt = _build_response_prompt(state)
+
+    for chunk in main_llm.stream([
         HumanMessage(content=prompt)
-    ])
-
-    state["final_response"] = response.content
-
-    return state
+    ]):
+        yield chunk.content
