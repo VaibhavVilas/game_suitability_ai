@@ -62,6 +62,8 @@ from langgraph.graph import StateGraph
 from nodes import (
     fetch_games_data,
     summarize_conversation,
+    classify_message,
+    route_message,
     generate_response
 )
 
@@ -80,6 +82,8 @@ class GameState(TypedDict):
 
     conversation_summary: str
 
+    message_type: str
+
     final_response: str
 
 
@@ -93,6 +97,11 @@ builder = StateGraph(GameState)
 builder.add_node(
     "summarize_conversation",
     summarize_conversation
+)
+
+builder.add_node(
+    "classify_message",
+    classify_message
 )
 
 builder.add_node(
@@ -116,7 +125,17 @@ builder.set_entry_point(
 
 builder.add_edge(
     "summarize_conversation",
-    "fetch_games_data"
+    "classify_message"
+)
+
+builder.add_conditional_edges(
+    "classify_message",
+    route_message,
+    {
+        "recommendation": "fetch_games_data",
+        "comparison":     "fetch_games_data",
+        "general_question": "generate_response"
+    }
 )
 
 builder.add_edge(

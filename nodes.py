@@ -405,7 +405,49 @@ def fetch_games_data(state):
 
 
 # ==========================================
-# NODE 3 → GENERATE RESPONSE
+# NODE 3 → CLASSIFY MESSAGE
+# ==========================================
+
+def classify_message(state):
+
+    user_message = state["user_message"]
+
+    prompt = f"""
+Classify this gaming message into exactly one category:
+
+- recommendation: user mentions a specific game AND asks if it suits them, fits their playstyle, or asks about its difficulty/length/story in the context of their own preferences
+- comparison: user wants to compare 2 or more games against each other
+- general_question: purely generic gaming question with no specific game mentioned, or asks a factual question unrelated to personal suitability (e.g. "what is a soulslike?", "how long are RPGs?")
+
+Rule: if a specific game is named AND the user is asking whether it fits them → always recommendation.
+
+Message: {user_message}
+
+Return ONLY the category name. Nothing else.
+"""
+
+    response = mini_llm.invoke([
+        HumanMessage(content=prompt)
+    ])
+
+    message_type = response.content.strip().lower()
+
+    print("\nMESSAGE TYPE:\n", message_type)
+
+    if message_type not in ["recommendation", "comparison", "general_question"]:
+        message_type = "recommendation"
+
+    state["message_type"] = message_type
+
+    return state
+
+
+def route_message(state):
+    return state["message_type"]
+
+
+# ==========================================
+# NODE 4 → GENERATE RESPONSE
 # ==========================================
 
 def generate_response(state):
@@ -436,7 +478,52 @@ def _build_response_prompt(state):
 
     summary = state["conversation_summary"]
 
-    games_data = state["games_data"]
+    games_data = state.get("games_data", [])
+
+    message_type = state.get("message_type", "recommendation")
+
+
+    if message_type == "general_question":
+        return f"""
+You are GameSense AI, an expert gaming assistant.
+
+Answer the user's question conversationally and knowledgeably.
+Draw on their preferences from the summary when relevant.
+Do not force a recommendation if they are just asking a question.
+
+Conversation Summary:
+{summary}
+
+Recent Conversation:
+{recent_messages}
+
+Answer helpfully.
+"""
+
+    if message_type == "comparison":
+        return f"""
+You are GameSense AI, an expert gaming assistant.
+
+The user wants to compare games. Give a direct, structured comparison.
+
+Focus on:
+- Gameplay feel and pacing differences
+- Difficulty gap between the games
+- Story depth and length
+- Which suits the user better based on their preferences
+- Clear verdict at the end
+
+Conversation Summary:
+{summary}
+
+Recent Conversation:
+{recent_messages}
+
+IGDB Data:
+{games_data}
+
+Compare the games and give a clear verdict.
+"""
 
     return f"""
 You are GameSense AI,

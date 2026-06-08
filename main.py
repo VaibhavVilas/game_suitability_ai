@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from models import ChatRequest
 from graph import graph
-from nodes import summarize_conversation, fetch_games_data, stream_response
+from nodes import summarize_conversation, classify_message, fetch_games_data, stream_response
 
 app = FastAPI()
 
@@ -69,7 +69,10 @@ def chat_stream(request: ChatRequest):
     }
 
     state = summarize_conversation(state)
-    state = fetch_games_data(state)
+    state = classify_message(state)
+
+    if state["message_type"] in ["recommendation", "comparison"]:
+        state = fetch_games_data(state)
 
     return StreamingResponse(
         stream_response(state),
