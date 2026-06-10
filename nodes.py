@@ -485,7 +485,7 @@ def _build_response_prompt(state):
 
     if message_type == "general_question":
         return f"""
-You are GameSense AI, an expert gaming assistant.
+You are GameBase, an expert gaming assistant.
 
 Answer the user's question conversationally and knowledgeably.
 Draw on their preferences from the summary when relevant.
@@ -502,7 +502,7 @@ Answer helpfully.
 
     if message_type == "comparison":
         return f"""
-You are GameSense AI, an expert gaming assistant.
+You are GameBase, an expert gaming assistant.
 
 The user wants to compare games. Give a direct, structured comparison.
 
@@ -526,7 +526,7 @@ Compare the games and give a clear verdict.
 """
 
     return f"""
-You are GameSense AI,
+You are GameBase,
 an expert gaming recommendation assistant.
 
 IMPORTANT:
