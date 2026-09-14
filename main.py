@@ -22,6 +22,9 @@ def home():
         "message": "AI Gaming Advisor Running 🚀"
     }
 
+@app.get("/api/health")
+def health():
+    return {"status": "ok"}
 
 @app.post("/chat")
 def chat(request: ChatRequest):
