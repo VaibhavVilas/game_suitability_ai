@@ -256,10 +256,20 @@ def extract_possible_games(text):
     prompt = f"""
 Extract all video game names from this message.
 
+If a game is referred to by a shortcut, abbreviation, or partial name,
+expand it to its full official title.
+
+Examples:
+- "BG3" -> "Baldur's Gate 3"
+- "RDR2" -> "Red Dead Redemption 2"
+- "GTA5" or "GTA 5" -> "Grand Theft Auto V"
+- "Wukong" -> "Black Myth: Wukong"
+- "Cyberpunk" -> "Cyberpunk 2077"
+
 Message:
 {text}
 
-Return ONLY comma separated game names.
+Return ONLY comma separated full game names.
 
 Example:
 Sekiro, Elden Ring
